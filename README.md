@@ -21,5 +21,5 @@ $ poetry run uvicorn triathlon_live_calendar:app --reload --log-level=debug
 ```console
 $ poetry run black .
 $ poetry run mypy .
-$ poetry run flake8 **/*.py
+$ poetry run flake8 **/*.py --ignore=E501
 ```

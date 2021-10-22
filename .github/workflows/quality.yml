@@ -22,7 +22,7 @@ jobs:
         poetry install
 
     - name: Run flake8
-      run: poetry run flake8 **/*.py
+      run: poetry run flake8 **/*.py --ignore=E501
 
     - name: Run Black
       run: poetry run black . --check

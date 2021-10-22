@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "triathlon-live-calendar"
+version = "0.0.1"
+description = "Calendar file generator for triathlonlive.tv upcoming events"
+authors = ["Eduardo Cuducos <cuducos@users.noreply.github.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.9.4"
+fastapi = "^0.70.0"
+httpx = "^0.20.0"
+ics = "^0.7"
+pyquery = "^1.4.3"
+uvicorn = {extras = ["standard"], version = "^0.15.0"}
+
+[tool.poetry.dev-dependencies]
+ipython = "^7.28.0"
+black = "^21.9b0"
+flake8 = "^4.0.1"
+mypy = "^0.910"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

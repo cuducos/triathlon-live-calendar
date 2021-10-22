@@ -1,4 +1,5 @@
 from datetime import timedelta
+from hashlib import md5
 from re import compile, findall
 from typing import Tuple
 
@@ -31,4 +32,5 @@ async def event_from(client: AsyncClient, url: str) -> Event:
         begin=get(begin, DATETIME_FORMAT),
         duration=DEFAULT_DURATION,
         url=url,
+        uid=md5(url.encode("utf-8")).hexdigest(),
     )

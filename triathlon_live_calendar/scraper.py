@@ -1,11 +1,10 @@
-from asyncio import gather
 from datetime import timedelta
 from re import compile, findall
 from typing import Tuple
 
 from arrow import get  # type: ignore
 from httpx import AsyncClient
-from ics import Calendar, Event  # type: ignore
+from ics import Event  # type: ignore
 from pyquery import PyQuery  # type: ignore
 
 
@@ -32,11 +31,3 @@ async def event_from(client: AsyncClient, url: str) -> Event:
         begin=get(begin, DATETIME_FORMAT),
         duration=DEFAULT_DURATION,
     )
-
-
-async def calendar() -> Calendar:
-    async with AsyncClient() as client:
-        urls = await event_urls(client)
-        requests = tuple(event_from(client, url) for url in urls)
-        events = await gather(*requests)
-    return Calendar(events=events)

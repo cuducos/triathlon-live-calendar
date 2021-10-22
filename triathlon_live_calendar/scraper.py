@@ -30,4 +30,5 @@ async def event_from(client: AsyncClient, url: str) -> Event:
         name=title.text,
         begin=get(begin, DATETIME_FORMAT),
         duration=DEFAULT_DURATION,
+        url=url,
     )

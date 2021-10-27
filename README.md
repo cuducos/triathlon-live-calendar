@@ -12,9 +12,19 @@ $ poetry install
 
 ## Running
 
+Starting the web server in development mode:
+
 ```console
-$ poetry run uvicorn triathlon_live_calendar:app --reload --log-level=debug
+$ poetry run python -m triathlon_live_calendar web --reload --log-level=debug
 ```
+
+Generating the `.ics` file locally:
+
+```console
+$ poetry run python -m triathlon_live_calendar generate tri-calendar.ics
+```
+
+Try `python -m triathlon_live_calendar --help` for more details ; )
 
 ## Contributing
 

@@ -3,6 +3,7 @@ from fastapi.responses import PlainTextResponse
 
 from triathlon_live_calendar.cache import Cache
 from triathlon_live_calendar.calendar import calendar
+from triathlon_live_calendar.logger import Logger
 
 
 DEFAULT_HEADERS = {
@@ -13,6 +14,7 @@ DEFAULT_HEADERS = {
 
 app = FastAPI()
 cache = Cache()
+logger = Logger()
 
 
 @app.get("/", response_class=PlainTextResponse)
@@ -23,6 +25,6 @@ async def home(response: PlainTextResponse):
     if cached:
         return cached
 
-    contents = str(await calendar())
+    contents = str(await calendar(logger))
     cache.save(contents)
     return contents

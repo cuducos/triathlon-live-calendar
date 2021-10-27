@@ -7,6 +7,7 @@ from typer import Typer, Option
 from uvicorn import run  # type: ignore
 
 from triathlon_live_calendar.calendar import calendar
+from triathlon_live_calendar.logger import Logger
 
 
 DEFAULT_HOST = "0.0.0.0"
@@ -45,9 +46,10 @@ def web(
 
 
 @app.command()
-def generate(path: Path):
+def generate(path: Path, verbose: bool = False):
     """Generates the calendar .ics file"""
-    contents = asyncio.run(calendar())
+    logger = Logger(use_typer_echo=True) if verbose else None
+    contents = asyncio.run(calendar(logger))
     path.write_text(str(contents))
 
 

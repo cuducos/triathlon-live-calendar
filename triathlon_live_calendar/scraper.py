@@ -1,6 +1,7 @@
 from datetime import timedelta
 from hashlib import md5
 from re import compile, findall
+from time import tzname
 from typing import Optional, Tuple
 
 from arrow import get  # type: ignore
@@ -34,7 +35,9 @@ async def event_from(client: AsyncClient, url: str, logger: Optional[Logger]) ->
     title = title.text.strip()
 
     if logger:
-        logger.info((f"Parsed {url}", f"  Title: {title}", f"  Begin: {begin}"))
+        tz, *_ = tzname
+        local = begin.to(tz).format(DATETIME_FORMAT[:-2])
+        logger.info((f"Parsed {url}", f"  Title: {title}", f"  Begin: {local}"))
 
     return Event(
         name=title,

@@ -37,7 +37,7 @@ async def event_from(client: AsyncClient, url: str, logger: Optional[Logger]) ->
     if logger:
         tz, *_ = tzname
         local = begin.to(tz).format(DATETIME_FORMAT[:-2])
-        logger.info((f"Parsed {url}", f"  Title: {title}", f"  Begin: {local}"))
+        logger.debug((f"Parsed {url}", f"  Title: {title}", f"  Begin: {local}"))
 
     return Event(
         name=title,

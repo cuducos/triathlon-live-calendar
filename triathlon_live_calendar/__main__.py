@@ -5,16 +5,16 @@ from pathlib import Path
 from typing import Optional
 
 from typer import Typer, Option, echo
-from uvicorn import run  # type: ignore
+from uvicorn import run
 
 from triathlon_live_calendar.calendar import calendar
 from triathlon_live_calendar.logger import Logger
 
 
 DEFAULT_HOST = "0.0.0.0"
-DEFAULT_PORT = 5000
+DEFAULT_PORT = 8000
 DEFAULT_LOG_LEVEL = "info"
-PORT_HELP = "[default: 5000 or PORT from environment variable]"
+PORT_HELP = f"[default: {DEFAULT_PORT} or PORT from environment variable]"
 LEVELS = {
     "critical": CRITICAL,
     "error": ERROR,
@@ -59,7 +59,7 @@ def web(
         "reload": reload,
     }
     kwargs = {key: value for key, value in kwargs.items() if value}
-    run("triathlon_live_calendar:app", **kwargs)
+    run("triathlon_live_calendar:app", **kwargs)  # type: ignore
 
 
 @app.command()
@@ -70,7 +70,7 @@ def generate(
     """Generates the calendar .ics file"""
     logger = Logger(LEVELS[log_level])
     contents = asyncio.run(calendar(logger))
-    path.write_text(str(contents))
+    path.write_text(contents.serialize())
 
 
 if __name__ == "__main__":

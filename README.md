@@ -4,7 +4,7 @@ Calendar file generator for triathlonlive.tv upcoming events.
 
 ## Install
 
-Requires [Python](https://python.org) 3.9.7 and [Poetry](https://python-poetry.org).
+Requires [Python](https://python.org) 3.11.2 and [Poetry](https://python-poetry.org).
 
 ```console
 $ poetry install
@@ -28,8 +28,8 @@ Try `python -m triathlon_live_calendar --help` for more details ; )
 
 ## Contributing
 
+Please, write and run tests:
+
 ```console
-$ poetry run black .
-$ poetry run mypy .
-$ poetry run flake8 **/*.py --ignore=E501
+$ poetry run pytest
 ```

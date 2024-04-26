@@ -6,7 +6,7 @@ authors = ["Eduardo Cuducos <cuducos@users.noreply.github.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.11.2"
+python = "^3.11"
 fastapi = "^0.92.0"
 httpx = "^0.23.3"
 ics = "^0.7"

@@ -4,7 +4,7 @@
 #
 
 app = 'triathlon-live-calendar'
-primary_region = 'yul'
+primary_region = 'ams'
 
 [build]
 

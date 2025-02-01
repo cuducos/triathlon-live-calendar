@@ -4,12 +4,11 @@ from os import getenv
 from pathlib import Path
 from typing import Optional
 
-from typer import Typer, Option, echo
+from typer import Option, Typer, echo
 from uvicorn import run
 
 from triathlon_live_calendar.calendar import calendar
 from triathlon_live_calendar.logger import Logger
-
 
 DEFAULT_HOST = "0.0.0.0"
 DEFAULT_PORT = 8000

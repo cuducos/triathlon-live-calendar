@@ -1,29 +1,35 @@
-[tool.poetry]
+[project]
 name = "triathlon-live-calendar"
-version = "0.0.1"
+version = "0.0.2"
 description = "Calendar file generator for triathlonlive.tv upcoming events"
-authors = ["Eduardo Cuducos <cuducos@users.noreply.github.com>"]
+authors = [{ name = "Eduardo Cuducos", email = "cuducos@users.noreply.github.com" }]
+requires-python = "~=3.12"
 license = "MIT"
+dependencies = [
+    "fastapi>=0.115.8,<1",
+    "httpx>=0.28.1,<1",
+    "ics>=0.7,<1",
+    "orjson>=3.10.15,<4",
+    "pyquery>=2.0.0,<3",
+    "typer>=0.15.1,<1",
+    "uvicorn[standard]>=0.34.0,<1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-fastapi = "^0.92.0"
-httpx = "^0.23.3"
-ics = "^0.7"
-pyquery = "^2.0.0"
-typer = "^0.7.0"
-uvicorn = {extras = ["standard"], version = "^0.20.0"}
+[dependency-groups]
+dev = [
+    "ipdb>=0.13.13",
+    "pytest-asyncio>=0.25.3",
+    "pytest-mypy>=0.10.3",
+    "pytest-ruff>=0.4.1",
+    "ruff>=0.9.4",
+]
 
-[tool.poetry.dev-dependencies]
-ipython = "^8.10.0"
-pytest = "^7.2.1"
-pytest-black = "^0.3.12"
-pytest-mypy = "^0.10.3"
-pytest-ruff = "^0.0.3"
+[tool.ruff.lint]
+select = ["E", "F", "I"]
 
 [tool.pytest.ini_options]
-addopts = "--black --ruff --mypy --mypy-ignore-missing-imports --disable-warnings"
+addopts = "--ruff-format --ruff --mypy --mypy-ignore-missing-imports --disable-warnings"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

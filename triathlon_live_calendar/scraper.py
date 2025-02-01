@@ -1,65 +1,86 @@
-from datetime import timedelta
-from hashlib import md5
-from re import compile, findall
-from time import tzname
-from typing import Tuple
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
+from typing import AsyncGenerator
 
-from arrow import get
 from httpx import AsyncClient
 from ics import Event
+from orjson import loads
 from pyquery import PyQuery
 
 from triathlon_live_calendar.logger import Logger
 
-
-BASE_URL = "https://www.triathlonlive.tv/upcoming-live-streams"
+URL = "https://triathlonlive.tv/"
+USER_AGENT = "triathlon-live-calendar/0.0.2"
+DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 DEFAULT_DURATION = timedelta(hours=3)
-DATETIME_REGEX = compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [+-]*\d{4}")
-DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss Z"
 
 
-async def event_urls(client: AsyncClient, logger: Logger) -> Tuple[str, ...]:
-    urls, page = set(), 0
-    while True:
-        page += 1
-        url = f"{BASE_URL}?page={page}"
-
-        logger.debug(f"Requesting: {url}")
-        response = await client.get(url)
-        if response.status_code < 200 and response.status_code >= 300:
-            break
-
-        dom = PyQuery(response.content)
-        links = dom("a.browse-item-link")
-        if not links:
-            break
-
-        for link in links:
-            event_url = link.attrib.get("href")
-            logger.debug(f"Found: {event_url}")
-            urls.add(event_url)
-
-    return tuple(str(url) for url in urls if url)
+class ScraperInitError(Exception): ...
 
 
-async def event_from(client: AsyncClient, url: str, logger: Logger) -> Event:
-    response = await client.get(url)
-    dom = PyQuery(response.content)
-    title, *_ = dom("h1 strong")
-    begin, *_ = findall(DATETIME_REGEX, str(response.content))
-
-    begin = get(begin, DATETIME_FORMAT)
-    title = title.text.strip()
-
-    if logger:
-        tz, *_ = tzname
-        local = begin.to(tz).format(DATETIME_FORMAT[:-2])
-        logger.debug((f"Parsed {url}", f"  Title: {title}", f"  Begin: {local}"))
-
+def to_event(data: dict, logger: Logger) -> Event:
+    name = data["name"]
+    url = f"{URL}video/{data['token']}"
+    begin = datetime.strptime(data["start_time"], DATE_FORMAT).replace(
+        tzinfo=timezone.utc
+    )
+    logger.debug(f"Parsed {url}\n  Title: {name}\n  Begin: {begin}")
     return Event(
-        name=title,
+        name=name,
         begin=begin,
         duration=DEFAULT_DURATION,
         url=url,
-        uid=md5(url.encode("utf-8")).hexdigest(),
+        uid=data["token"],
     )
+
+
+@dataclass
+class Scraper:
+    API = "https://apiv3.videoflow.io/"
+    HEADERS = {"User-Agent": USER_AGENT, "Origin": URL}
+
+    token: str
+    page: str
+
+    async def json(self, client, section=None) -> AsyncGenerator[dict, None]:
+        url = f"{self.API}ch/{self.token}/pages/{self.page}/sections"
+        if section:
+            url = f"{url}/{section}/content"
+        response = await client.get(url, headers=self.HEADERS)
+        for data in response.json().get("data", ()):
+            yield data
+
+    async def sections(self, client: AsyncClient) -> AsyncGenerator[str, None]:
+        async for section in self.json(client):
+            yield section["token"]
+
+    async def events(self, logger: Logger) -> AsyncGenerator[Event, None]:
+        async with AsyncClient() as client:
+            async for section in self.sections(client):
+                async for event in self.json(client, section):
+                    if not (data := event.get("input")):
+                        continue
+                    yield to_event(data, logger)
+
+    @classmethod
+    async def init(cls) -> "Scraper":
+        async with AsyncClient() as client:
+            response = await client.get(
+                URL, headers={"User-Agent": USER_AGENT}, follow_redirects=True
+            )
+            dom = PyQuery(response.text)
+            script, *_ = dom('script[type="application/json"]')
+            data = loads(script.text)
+            channel = data["props"]["pageProps"]["channelData"]
+            token = channel["token"]
+            page = None
+            for nav in channel["header"]["navigation"]:
+                if nav.get("name", "").lower() != "calendar":
+                    continue
+                page = nav["url"]
+                break
+
+            if not page:
+                raise ScraperInitError(f"Could not find token and URL in {URL}")
+
+            return cls(token, page)

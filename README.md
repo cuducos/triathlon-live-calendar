@@ -1,27 +1,24 @@
 # Triathlon Live Calendar
 
-Calendar file generator for triathlonlive.tv upcoming events.
+Calendar file generator for [TriathlonLive](https://www.triathlonlive.tv/) upcoming events.
 
-## Install
+## Requirements
 
-Requires [Python](https://python.org) 3.11 and [Poetry](https://python-poetry.org).
-
-```console
-$ poetry install
-```
+* [Python](https://python.org) 3.12 or newer
+* [`uv`](https://docs.astral.sh/uv/)
 
 ## Running
 
 Starting the web server in development mode:
 
 ```console
-$ poetry run python -m triathlon_live_calendar web --reload --log-level=debug
+$ uv run python -m triathlon_live_calendar web --reload --log-level=debug
 ```
 
 Generating the `.ics` file locally:
 
 ```console
-$ poetry run python -m triathlon_live_calendar generate tri-calendar.ics
+$ uv run python -m triathlon_live_calendar generate tri-calendar.ics
 ```
 
 Try `python -m triathlon_live_calendar --help` for more details ; )
@@ -31,5 +28,5 @@ Try `python -m triathlon_live_calendar --help` for more details ; )
 Please, write and run tests:
 
 ```console
-$ poetry run pytest
+$ uv run pytest
 ```

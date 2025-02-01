@@ -5,7 +5,6 @@ from triathlon_live_calendar.cache import Cache
 from triathlon_live_calendar.calendar import calendar
 from triathlon_live_calendar.logger import Logger
 
-
 DEFAULT_HEADERS = {
     "Content-type": "text/calendar",
     "Content-Disposition": 'attachment; filename="triathlon_live.ics"',

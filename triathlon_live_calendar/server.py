@@ -19,11 +19,9 @@ logger = Logger()
 @app.get("/", response_class=PlainTextResponse)
 async def home(response: PlainTextResponse):
     response.headers.update(DEFAULT_HEADERS)
-
-    cached = cache.response
-    if cached:
+    if cached := cache.value:
         return cached
 
-    contents = str(await calendar(logger))
+    contents = (await calendar(logger)).serialize()
     cache.save(contents)
     return contents

@@ -24,7 +24,7 @@ def to_event(data: dict, logger: Logger) -> Event:
     begin = datetime.strptime(data["start_time"], DATE_FORMAT).replace(
         tzinfo=timezone.utc
     )
-    logger.debug(f"Parsed {url}\n  Title: {name}\n  Begin: {begin}")
+    logger.debug((f"Parsed {url}", f"  Title: {name}", f"  Begin: {begin}"))
     return Event(
         name=name,
         begin=begin,

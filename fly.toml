@@ -1,10 +1,5 @@
-# fly.toml app configuration file generated for triathlon-live-calendar on 2024-10-05T18:57:12-04:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
 app = 'triathlon-live-calendar'
-primary_region = 'ams'
+primary_region = 'gru'
 
 [build]
 
